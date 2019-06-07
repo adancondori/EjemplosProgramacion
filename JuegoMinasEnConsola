@@ -1,0 +1,77 @@
+// Example program
+#include <iostream>
+#include <string>
+#include <stdlib.h>     /* srand, rand */
+// Tamaño de Matriz
+const int F = 10;
+const int C = 10;
+
+int Tablero [F][C];
+const int Niveles = 3;
+int TesoroNivel[Niveles] = { 1, 2, 3 }; 
+int n,m = 0;
+int nroVidas = 5;
+int nroFallos = 0;
+int encontrados = 0;
+
+void llenarTablero(int F, int C){
+    for (n=0; n < F; n++) {
+        for (m = 0; m < C; m++) {
+          Tablero[n][m] = 1;
+        }
+    }
+}
+
+void mostrarTablero(int F, int C){
+    for (n=0; n< F; n++) {
+        std::string strA = ""; 
+        for (m = 0; m < C; m++) {
+          strA = strA + " " + std::to_string(Tablero[n][m]);
+        }
+        std::cout << strA << "\n"; 
+    }
+}
+
+void llenarTesoro(int nroTesoro, int F) {
+    for (m = 0; m < nroTesoro; m++) {
+        /* generate secret number between 1 and F: */
+        int FF = (rand() % F + 1) - 1;
+        int CC = (rand() % F + 1) - 1;
+        if (Tablero[FF][CC] == 0) {
+            nroTesoro += 1;
+        }
+        Tablero[FF][CC] = 0;
+        //std::cout << std::to_string(FF) + " " + std::to_string(CC) << "\n";
+    }
+}
+
+void validarCelda(int F, int C){
+    F -= 1; // inicia en 0
+    C -= 1; // inicia en 0
+    if (Tablero[F][C] == 0) {
+        std::cout << "Muy Bien" << "\n";
+        encontrados += 1;
+    } else {
+        std::cout << "Fallaste" << "\n";
+        nroFallos += 1;
+    } 
+}    
+
+int main() {
+    for (int j = 0; (j < Niveles and nroFallos < nroVidas); j++) {
+        std::cout << "###########################################################" << "\n";
+        std::cout << "Nivel #" << std::to_string(j + 1) << "\n";
+        llenarTablero(F, C);
+        llenarTesoro(TesoroNivel[j], F);
+        mostrarTablero(F, C);
+        encontrados = 0;
+        while (nroFallos < nroVidas and encontrados != TesoroNivel[j]){
+            std::string fila, columna = "";
+            std::cout << "Ingrese Fila luego Columna? "<< "\n";
+            getline (std::cin, fila);
+            getline (std::cin, columna);
+            validarCelda(std::stoi(fila), std::stoi(columna));
+        }
+    }
+    std::cout << "##########  FIN DEL JUEGO #################################################" << "\n";
+}
